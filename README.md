@@ -1,4 +1,4 @@
-[![Test Coverage](https://api.codeclimate.com/v1/badges/1ceadff5f5ef77b2e8b6/test_coverage)](https://codeclimate.com/github/flexper/savim-s3/test_coverage) [![Maintainability](https://api.codeclimate.com/v1/badges/1ceadff5f5ef77b2e8b6/maintainability)](https://codeclimate.com/github/flexper/savim-s3/maintainability) ![npm](https://img.shields.io/npm/v/savim-s3) ![npm](https://img.shields.io/npm/dm/savim-s3) ![Snyk Vulnerabilities for npm package](https://img.shields.io/snyk/vulnerabilities/npm/savim-s3) ![NPM](https://img.shields.io/npm/l/savim-s3)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/ae0843030bc8e307e5d1/test_coverage)](https://codeclimate.com/github/flexper/savim-s3/test_coverage) [![Maintainability](https://api.codeclimate.com/v1/badges/ae0843030bc8e307e5d1/maintainability)](https://codeclimate.com/github/flexper/savim-s3/maintainability) ![npm](https://img.shields.io/npm/v/savim-s3) ![npm](https://img.shields.io/npm/dm/savim-s3) ![Snyk Vulnerabilities for npm package](https://img.shields.io/snyk/vulnerabilities/npm/savim-s3) ![NPM](https://img.shields.io/npm/l/savim-s3)
 
 # savim-s3
 
