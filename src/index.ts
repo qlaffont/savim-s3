@@ -34,6 +34,8 @@ function streamToString(stream: Readable) {
 
 export class SavimAWSS3Provider implements SavimProviderInterface {
   name = 'aws-s3';
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //@ts-ignore
   client;
 
   constructor(public config: SavimAWSS3ProviderConfig) {
