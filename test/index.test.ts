@@ -24,6 +24,13 @@ jest.mock('@aws-sdk/client-s3', () => {
 
       return {};
     }),
+    ListObjectsV2Command: jest.fn().mockImplementation(() => {
+      if (process.env.ERROR === 'true') {
+        throw new Error('test');
+      }
+
+      return {};
+    }),
     PutObjectCommand: jest.fn().mockImplementation(() => {
       return {};
     }),
@@ -45,24 +52,19 @@ describe('Savim S3', () => {
   it('should be Defined', () => {
     expect(Savim).toBeDefined();
   });
-
   it('should be able to define log', () => {
     expect(new Savim('debug')).toBeDefined();
   });
-
   it('should be able to add provider', async () => {
     const savim = new Savim();
-
     process.env.ERROR = 'true';
     await savim.addProvider<SavimAWSS3ProviderConfig>(SavimAWSS3Provider, {
       Bucket: 'testbucket',
     });
     process.env.ERROR = 'false';
-
     expect(savim).toBeDefined();
     expect(savim.providers).toBeDefined();
     expect(Object.keys(savim.providers)).toHaveLength(0);
-
     await savim.addProvider<SavimAWSS3ProviderConfig>(SavimAWSS3Provider, {
       Bucket: 'testbucket',
       region: 'eu-west-1',
@@ -71,15 +73,12 @@ describe('Savim S3', () => {
         secretAccessKey: 'testSecretAccessKey',
       },
     });
-
     expect(savim).toBeDefined();
     expect(savim.providers).toBeDefined();
     expect(Object.keys(savim.providers)).toHaveLength(1);
   });
-
   it('should be able to upload file (string)', async () => {
     const savim = new Savim();
-
     await savim.addProvider<SavimAWSS3ProviderConfig>(SavimAWSS3Provider, {
       Bucket: 'testbucket',
       region: 'eu-west-1',
@@ -88,16 +87,12 @@ describe('Savim S3', () => {
         secretAccessKey: 'testSecretAccessKey',
       },
     });
-
     const fileName = 'testupload.txt';
     const fileContent = 'test';
-
     await savim.uploadFile(fileName, fileContent);
   });
-
   it('should be able to upload file (buffer)', async () => {
     const savim = new Savim();
-
     await savim.addProvider<SavimAWSS3ProviderConfig>(SavimAWSS3Provider, {
       Bucket: 'testbucket',
       region: 'eu-west-1',
@@ -106,16 +101,12 @@ describe('Savim S3', () => {
         secretAccessKey: 'testSecretAccessKey',
       },
     });
-
     const fileName = 'testuploadbuffer.txt';
     const fileContent = 'test';
-
     await savim.uploadFile(fileName, Buffer.from(fileContent, 'utf8'));
   });
-
   it('should be able to upload file (stream)', async () => {
     const savim = new Savim();
-
     await savim.addProvider<SavimAWSS3ProviderConfig>(SavimAWSS3Provider, {
       Bucket: 'testbucket',
       region: 'eu-west-1',
@@ -124,20 +115,15 @@ describe('Savim S3', () => {
         secretAccessKey: 'testSecretAccessKey',
       },
     });
-
     const fileName = 'testuploadstream.txt';
     const fileContent = 'test';
-
     const s = new Readable();
     s.push(fileContent);
     s.push(null);
-
     await savim.uploadFile(fileName, s);
   });
-
   it('should be able to get file', async () => {
     const savim = new Savim();
-
     await savim.addProvider<SavimAWSS3ProviderConfig>(SavimAWSS3Provider, {
       Bucket: 'testbucket',
       region: 'eu-west-1',
@@ -148,13 +134,10 @@ describe('Savim S3', () => {
     });
     const fileName = 'testupload.txt';
     const fileContent = 'test';
-
     expect(await savim.getFile(fileName)).toEqual(fileContent);
   });
-
   it('should be able to delete file', async () => {
     const savim = new Savim();
-
     await savim.addProvider<SavimAWSS3ProviderConfig>(SavimAWSS3Provider, {
       Bucket: 'testbucket',
       region: 'eu-west-1',
@@ -163,9 +146,59 @@ describe('Savim S3', () => {
         secretAccessKey: 'testSecretAccessKey',
       },
     });
-
     const fileName = 'testupload.txt';
-
     await savim.deleteFile(fileName);
+  });
+
+  it('should be able to create folder', async () => {
+    const savim = new Savim();
+    await savim.addProvider<SavimAWSS3ProviderConfig>(SavimAWSS3Provider, {
+      Bucket: 'testbucket',
+      region: 'eu-west-1',
+      credentials: {
+        accessKeyId: 'testAccessKeyId',
+        secretAccessKey: 'testSecretAccessKey',
+      },
+    });
+    await savim.createFolder('createfolder');
+  });
+
+  it('should be able to delete folder', async () => {
+    const savim = new Savim();
+    await savim.addProvider<SavimAWSS3ProviderConfig>(SavimAWSS3Provider, {
+      Bucket: 'testbucket',
+      region: 'eu-west-1',
+      credentials: {
+        accessKeyId: 'testAccessKeyId',
+        secretAccessKey: 'testSecretAccessKey',
+      },
+    });
+    await savim.deleteFolder('deletefolder');
+  });
+
+  it('should be able to list folders', async () => {
+    const savim = new Savim();
+    await savim.addProvider<SavimAWSS3ProviderConfig>(SavimAWSS3Provider, {
+      Bucket: 'testbucket',
+      region: 'eu-west-1',
+      credentials: {
+        accessKeyId: 'testAccessKeyId',
+        secretAccessKey: 'testSecretAccessKey',
+      },
+    });
+    await savim.getFolders('');
+  });
+
+  it('should be able to list files', async () => {
+    const savim = new Savim();
+    await savim.addProvider<SavimAWSS3ProviderConfig>(SavimAWSS3Provider, {
+      Bucket: 'testbucket',
+      region: 'eu-west-1',
+      credentials: {
+        accessKeyId: 'testAccessKeyId',
+        secretAccessKey: 'testSecretAccessKey',
+      },
+    });
+    await savim.getFiles('');
   });
 });

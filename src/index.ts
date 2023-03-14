@@ -2,6 +2,7 @@ import {
   DeleteObjectCommand,
   GetObjectCommand,
   ListObjectsCommand,
+  ListObjectsV2Command,
   PutObjectCommand,
   PutObjectRequest,
   S3Client,
@@ -99,5 +100,49 @@ export class SavimAWSS3Provider implements SavimProviderInterface {
     });
 
     await this.client.send(command);
+  }
+
+  async createFolder(path: string) {
+    const command = new PutObjectCommand({
+      Bucket: this.config.Bucket,
+      Key: `${path}/`,
+    });
+
+    await this.client.send(command);
+  }
+
+  async deleteFolder(path: string) {
+    const command = new DeleteObjectCommand({
+      Bucket: this.config.Bucket,
+      Key: `${path}`,
+    });
+
+    await this.client.send(command);
+  }
+
+  async getFolders(path: string) {
+    const command = new ListObjectsV2Command({
+      Bucket: this.config.Bucket,
+      Prefix: path,
+    });
+
+    const response = await this.client.send(command);
+
+    return response.Contents?.map((v) => v.Key!).filter(
+      (v) => v?.at(-1) === '/',
+    );
+  }
+
+  async getFiles(path: string) {
+    const command = new ListObjectsV2Command({
+      Bucket: this.config.Bucket,
+      Prefix: path,
+    });
+
+    const response = await this.client.send(command);
+
+    return response.Contents?.map((v) => v.Key!).filter(
+      (v) => v.at(-1) !== '/',
+    );
   }
 }
