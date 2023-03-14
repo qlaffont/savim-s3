@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import {
   DeleteObjectCommand,
   GetObjectCommand,
@@ -128,7 +129,9 @@ export class SavimAWSS3Provider implements SavimProviderInterface {
 
     const response = await this.client.send(command);
 
+    //@ts-ignore
     return response.Contents?.map((v) => v.Key!).filter(
+      //@ts-ignore
       (v) => v?.at(-1) === '/',
     );
   }
@@ -141,7 +144,9 @@ export class SavimAWSS3Provider implements SavimProviderInterface {
 
     const response = await this.client.send(command);
 
+    //@ts-ignore
     return response.Contents?.map((v) => v.Key!).filter(
+      //@ts-ignore
       (v) => v.at(-1) !== '/',
     );
   }
