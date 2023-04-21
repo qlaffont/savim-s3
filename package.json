@@ -79,6 +79,6 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.289.0",
-    "savim": "^1.1.1"
+    "savim": "^1.2.0"
   }
 }
