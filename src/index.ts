@@ -21,19 +21,6 @@ export type SavimAWSS3ProviderConfig = S3ClientConfig & {
   Bucket: string;
 };
 
-function streamToString(stream: Readable) {
-  const chunks: readonly Uint8Array[] | Buffer[] = [];
-  return new Promise((resolve, reject) => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //@ts-ignore
-    stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
-    stream.on('error', (err) => reject(err));
-    stream.on('end', () =>
-      resolve(Buffer.concat(chunks).toString('utf8') as string),
-    );
-  });
-}
-
 export class SavimAWSS3Provider implements SavimProviderInterface {
   name = 'aws-s3';
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -50,6 +37,7 @@ export class SavimAWSS3Provider implements SavimProviderInterface {
       await this.client.send(cmd);
       return true;
     } catch (err) {
+      console.log(err);
       return false;
     }
   }
@@ -69,14 +57,14 @@ export class SavimAWSS3Provider implements SavimProviderInterface {
     content: string | Buffer | Stream,
     params?: SavimAWSS3UploadFileParam,
   ) {
-    let fileStream: string;
+    let fileStream: string | Readable;
 
     if (Buffer.isBuffer(content)) {
       fileStream = (content as Buffer).toString();
     }
 
     if (content instanceof Readable) {
-      fileStream = (await streamToString(content)) as string;
+      fileStream = content;
     }
 
     if (typeof content === 'string') {
