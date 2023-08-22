@@ -57,7 +57,11 @@ export class SavimAWSS3Provider implements SavimProviderInterface {
     content: string | Buffer | Stream,
     params?: SavimAWSS3UploadFileParam,
   ) {
-    let fileStream: string | Readable;
+    let fileStream: string | Readable | Buffer;
+
+    if (Buffer.isBuffer(content)) {
+      fileStream = content;
+    }
 
     if (content instanceof Readable) {
       fileStream = content;
