@@ -59,10 +59,6 @@ export class SavimAWSS3Provider implements SavimProviderInterface {
   ) {
     let fileStream: string | Readable;
 
-    if (Buffer.isBuffer(content)) {
-      fileStream = (content as Buffer).toString();
-    }
-
     if (content instanceof Readable) {
       fileStream = content;
     }
