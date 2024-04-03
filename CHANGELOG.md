@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 1.1.172 (2024-04-03)
+
+
+### Bug Fixes
+
+* **deps:** update dependency savim to v1.2.114 ([074b0d5](https://github.com/qlaffont/savim-s3/commit/074b0d5ab7518b915c789e28052046745e2b0d1c))
+
 ### 1.1.171 (2024-04-03)
 
 ### 1.1.170 (2024-04-02)
