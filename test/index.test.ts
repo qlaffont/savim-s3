@@ -13,7 +13,7 @@ jest.mock('@aws-sdk/client-s3', () => {
     GetObjectCommand: jest.fn().mockImplementation(() => {
       return {
         Body: {
-          transformToString: () => 'test',
+          transformToByteArray: () => 'test',
         },
       };
     }),
@@ -39,7 +39,7 @@ jest.mock('@aws-sdk/client-s3', () => {
         send: jest.fn().mockImplementation(() => {
           return {
             Body: {
-              transformToString: () => 'test',
+              transformToByteArray: () => 'test',
             },
           };
         }),
