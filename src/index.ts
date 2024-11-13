@@ -49,7 +49,7 @@ export class SavimAWSS3Provider implements SavimProviderInterface {
     });
 
     const response = await this.client.send(command);
-    return await response.Body!.transformToString();
+    return await response.Body?.transformToString('binary');
   }
 
   async uploadFile(
