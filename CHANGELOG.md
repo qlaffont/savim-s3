@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 1.1.465 (2025-06-04)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @aws-sdk/client-s3 to v3.823.0 ([#510](https://github.com/qlaffont/savim-s3/issues/510)) ([45e769f](https://github.com/qlaffont/savim-s3/commit/45e769ff27b1b7801d87bc3c7871e5eb6c5a49c1))
+
 ### 1.1.464 (2025-06-02)
 
 ### 1.1.463 (2025-05-30)
