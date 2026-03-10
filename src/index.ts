@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import {
   DeleteObjectCommand,
   GetObjectCommand,
@@ -8,41 +7,36 @@ import {
   PutObjectRequest,
   S3Client,
   S3ClientConfig,
-} from '@aws-sdk/client-s3';
-import { SavimProviderInterface } from 'savim';
-import { Readable, Stream } from 'stream';
+} from "@aws-sdk/client-s3";
+import { SavimProviderInterface } from "savim";
+import { Readable, Stream } from "stream";
 
-export type SavimAWSS3UploadFileParam = Omit<
-  PutObjectRequest,
-  'Body' | 'Bucket' | 'Key'
->;
+export type SavimAWSS3UploadFileParam = Omit<PutObjectRequest, "Body" | "Bucket" | "Key">;
 
 export type SavimAWSS3ProviderConfig = S3ClientConfig & {
   Bucket: string;
 };
 
 export class SavimAWSS3Provider implements SavimProviderInterface {
-  name = 'aws-s3';
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  //@ts-ignore
-  client;
+  name = "aws-s3";
+  client: S3Client;
 
   constructor(public config: SavimAWSS3ProviderConfig) {
     this.client = new S3Client(config);
   }
 
-  async isHealthy() {
+  async isHealthy(): Promise<boolean> {
     try {
       const cmd = new ListObjectsCommand({ Bucket: this.config.Bucket });
       await this.client.send(cmd);
       return true;
-    } catch (err) {
-      console.log(err);
+      // oxlint-disable-next-line no-unused-vars
+    } catch (_err) {
       return false;
     }
   }
 
-  async getFile(filenameWithPath: string) {
+  async getFile(filenameWithPath: string): Promise<Uint8Array | undefined> {
     const command = new GetObjectCommand({
       Key: filenameWithPath,
       Bucket: this.config.Bucket,
@@ -56,33 +50,28 @@ export class SavimAWSS3Provider implements SavimProviderInterface {
     filenameWithPath: string,
     content: string | Buffer | Stream,
     params?: SavimAWSS3UploadFileParam,
-  ) {
+  ): Promise<unknown> {
     let fileStream: string | Readable | Buffer;
 
     if (Buffer.isBuffer(content)) {
       fileStream = content;
-    }
-
-    if (content instanceof Readable) {
+    } else if (content instanceof Readable) {
       fileStream = content;
-    }
-
-    if (typeof content === 'string') {
-      fileStream = content;
+    } else {
+      fileStream = content as string;
     }
 
     const command = new PutObjectCommand({
       ...(params || {}),
       Bucket: this.config.Bucket,
       Key: filenameWithPath,
-      Body: fileStream!,
+      Body: fileStream,
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     return this.client.send(command);
   }
 
-  async deleteFile(filenameWithPath: string) {
+  async deleteFile(filenameWithPath: string): Promise<void> {
     const command = new DeleteObjectCommand({
       Key: filenameWithPath,
       Bucket: this.config.Bucket,
@@ -91,7 +80,7 @@ export class SavimAWSS3Provider implements SavimProviderInterface {
     await this.client.send(command);
   }
 
-  async createFolder(path: string) {
+  async createFolder(path: string): Promise<void> {
     const command = new PutObjectCommand({
       Bucket: this.config.Bucket,
       Key: `${path}/`,
@@ -100,7 +89,7 @@ export class SavimAWSS3Provider implements SavimProviderInterface {
     await this.client.send(command);
   }
 
-  async deleteFolder(path: string) {
+  async deleteFolder(path: string): Promise<void> {
     const command = new DeleteObjectCommand({
       Bucket: this.config.Bucket,
       Key: `${path}`,
@@ -109,7 +98,7 @@ export class SavimAWSS3Provider implements SavimProviderInterface {
     await this.client.send(command);
   }
 
-  async getFolders(path: string) {
+  async getFolders(path: string): Promise<string[] | undefined> {
     const command = new ListObjectsV2Command({
       Bucket: this.config.Bucket,
       Prefix: path,
@@ -117,14 +106,10 @@ export class SavimAWSS3Provider implements SavimProviderInterface {
 
     const response = await this.client.send(command);
 
-    //@ts-ignore
-    return response.Contents?.map((v) => v.Key!).filter(
-      //@ts-ignore
-      (v) => v?.at(-1) === '/',
-    );
+    return response.Contents?.map((v) => v.Key!).filter((v) => v?.at(-1) === "/");
   }
 
-  async getFiles(path: string) {
+  async getFiles(path: string): Promise<string[] | undefined> {
     const command = new ListObjectsV2Command({
       Bucket: this.config.Bucket,
       Prefix: path,
@@ -132,10 +117,6 @@ export class SavimAWSS3Provider implements SavimProviderInterface {
 
     const response = await this.client.send(command);
 
-    //@ts-ignore
-    return response.Contents?.map((v) => v.Key!).filter(
-      //@ts-ignore
-      (v) => v.at(-1) !== '/',
-    );
+    return response.Contents?.map((v) => v.Key!).filter((v) => v.at(-1) !== "/");
   }
 }
